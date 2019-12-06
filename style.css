@@ -1,0 +1,38 @@
+h1 {
+    font-family: Avenir;
+}
+body {
+    display: grid;
+    justify-content: center;
+}
+
+#title {
+    font-size: 300%;
+    font-family: Avenir;
+    font-weight: bold;
+    text-align: center;
+}
+  
+progress[value] {
+    align-content: center;
+    -webkit-appearance: none;
+    appearance: none;
+    margin: 12px;
+    width: 500px;
+    height: 20px;
+    
+  }
+
+progress[value]::-webkit-progress-bar {
+    background-color: #eee;
+    border-radius: 7px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.20) inset;
+}
+
+progress[value]::-webkit-progress-value {
+    background-image:
+         -webkit-linear-gradient( transparent, transparent),
+         -webkit-linear-gradient(left, rgba(255, 0, 0, 0.9), rgba(255,255,0,0.9), rgba(0, 255, 0, 0.9));
+        border-radius: 7px; 
+        background-size: 35px 20px, 100% 100%, 100% 100%;
+}
