@@ -1,12 +1,4 @@
-
 const progressBar = document.querySelector("progress");
-
-function randomColor() {
-  const red = Math.floor(Math.random() * 250);
-  const green = Math.floor(Math.random() * 250);
-  const blue = Math.floor(Math.random() * 250);
-  return `rgba(${red},${green},${blue},0.7)`;
-}
 
 class Sprite {
   constructor(x, y, color, diameter) {
@@ -16,10 +8,9 @@ class Sprite {
     return this.diameter / 2;
   }
 }
-
 class Player extends Sprite {
   constructor() {
-    super(width/10, height/2, "white", 20);
+    super(width/10, height/2, "black", 20);
     this.health = 100;
   }
   render() {
@@ -53,16 +44,12 @@ class Player extends Sprite {
       }
       this.y += speed;
     }
-    
-
   }
   takeHit() {
     this.health -= 1;
-    console.log("oh");
     progressBar.value = this.health;
   }
 }
-
 class Enemy extends Sprite {
   constructor(x, y, Xspeed, Yspeed) {
     super(x, y, randomColor(), 30);
@@ -84,6 +71,65 @@ class Enemy extends Sprite {
     }
   }
 }
+class Enemy2 extends Sprite {
+  constructor(x, y, Xspeed, Yspeed) {
+    super(x, y, randomColor(), 60)
+    this.Xspeed = Xspeed;
+    this.Yspeed = Yspeed;
+  }
+  render() {
+    // stroke("black");
+    // strokeWeight(5); 
+    circle(this.x, this.y, this.diameter);
+  }
+  move(target) {
+    this.x += (target.x - this.x) *  this.Xspeed;
+    this.y += (target.y - this.y) *  this.Yspeed;
+    if(this.x >= width-this.diameter/2 || this.x <= this.diameter/2){
+      this.Xspeed = -this.Xspeed;
+    }
+    if(this.y >= height-this.diameter/2 || this.y <= this.diameter/2){
+      this.Yspeed = -this.Yspeed;
+    }
+  }
+}
+class Goal {
+  constructor(x, y, width, height, color) {
+    Object.assign(this, { x, y, width, height, color });
+  }
+  isTouched(player) {
+    if(player.x >= this.x){
+      return true;
+    } else {
+      return false;
+    }
+  }
+  
+  render() {
+    let goal_width = 30;
+    fill("red");
+    rect(width - goal_width, 0, goal_width, height);
+  }
+}
+
+let width = 1500;
+let height = 750;
+let goal = new Goal();
+let player = new Player();
+let enemies = []; 
+let enemies2 = [];
+
+for (let i = 0; i<300; i++){
+  enemies.push(new Enemy(...randomParticle()))
+}
+for (let i = 0; i<5; i++){
+  enemies2.push(new Enemy2(...randomPointOnCanvas(), Math.random()*0.01, Math.random()*0.01))
+}
+
+function moveToward(leader, follower, speed) {
+  follower.x += (leader.x - follower.x) * speed;
+  follower.y += (leader.y - follower.y) * speed;
+}
 
 function collided(sprite1, sprite2) {
   const distanceBetween = Math.hypot(
@@ -94,28 +140,20 @@ function collided(sprite1, sprite2) {
   return distanceBetween < sumOfRadii;
 }
 
-function randomPointOnCanvas() {
+function randomParticle() {
   return [
-    width/2,
+    width*(5/7),
     height/2,
     Math.floor(Math.random()*2) - 0.5,
     Math.floor(Math.random()*2) - 0.5
   ];
 }
 
-let width = 1500;
-let height = 750;
-let player = new Player();
-let enemies = [];
-for (let i = 0; i<300; i++){
-  enemies.push(new Enemy(...randomPointOnCanvas()),
-)
-}
-
-
-function setup() {
-  createCanvas(width, height);
-  noStroke();
+function randomPointOnCanvas() {
+  return [
+    width*(5/7),
+    height/2
+  ];
 }
 
 function checkForDamage(enemy, player) {
@@ -124,10 +162,10 @@ function checkForDamage(enemy, player) {
   }
 }
 
-function PlayerToSprite() {
-  const characters = [player, ...enemies];
+function adjust() {
+  const characters = [player, ...enemies, ...enemies2];
   for (let i = 0; i < characters.length; i++) {
-    for (let j = i + 1; j < characters.length; j++) {
+    for (let j = i+1; j < characters.length; j++) {
       pushOff(characters[i], characters[j]);
     }
   }
@@ -147,16 +185,43 @@ function pushOff(c1, c2) {
   }
 }
 
+function randomColor() {
+  const red = Math.floor(Math.random() * 250);
+  const green = Math.floor(Math.random() * 250);
+  const blue = Math.floor(Math.random() * 250);
+  return `rgba(${red},${green},${blue},0.7)`;
+}
 
+function setup() {
+  createCanvas(width, height);
+  noStroke();
+}
 
-function draw() {
-  background("black");
-  player.render();
-  enemies.forEach(enemy => {
-    enemy.render();
-    checkForDamage(enemy, player);
-    enemy.move();
-  });
-  PlayerToSprite();
+function slowDown(sprite) {
+  if(keyIsDown(32)){
+    sprite.Xspeed = sprite.Xspeed * 0.9;
+    sprite.Yspeed = sprite.Yspeed * 0.9;
+  }
   
 }
+
+function draw() {
+  background("url('/Users/lee/Documents/Visual_Studio_Code/Chaser Game/background_grid.jpg')");
+  noStroke();
+  goal.render();
+  player.render();
+  enemies.forEach(enemy1 => {
+    enemy1.render();
+    checkForDamage(enemy1, player);
+    enemy1.move();
+    slowDown(enemy1);
+  });
+  enemies2.forEach(enemy2 => {
+    enemy2.render();
+    checkForDamage(enemy2,player);
+    enemy2.move(player);
+    slowDown(enemy2);
+  })
+  adjust();
+}
+
