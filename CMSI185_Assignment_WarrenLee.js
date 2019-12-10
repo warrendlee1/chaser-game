@@ -50,6 +50,20 @@ class Player extends Sprite {
     progressBar.value = this.health;
   }
 }
+// class PlayerTail extends Sprite {
+//   constructor(x, y, Xspeed, Yspeed) {
+//     super(x, y, randomColor(), 10)
+//     this.Xspeed = Xspeed;
+//     this.Yspeed = Yspeed;
+//   }
+//   render() {
+//     circle(this.x, this.y, this.diameter);
+//   }
+//   move(player){
+//     this.x += (player.x - this.x) *  this.Xspeed;
+//     this.y += (player.y - this.y) *  this.Yspeed;
+//   }
+// }
 class Enemy extends Sprite {
   constructor(x, y, Xspeed, Yspeed) {
     super(x, y, randomColor(), 30);
@@ -198,15 +212,17 @@ function setup() {
 }
 
 function slowDown(sprite) {
+  sprite.Xspeed = sprite.Xspeed;
+  sprite.Yspeed = sprite.Yspeed;
   if(keyIsDown(32)){
-    sprite.Xspeed = sprite.Xspeed * 0.9;
-    sprite.Yspeed = sprite.Yspeed * 0.9;
+    sprite.Xspeed = sprite.Xspeed * 0.95;
+    sprite.Yspeed = sprite.Yspeed * 0.95;
   }
   
 }
 
 function draw() {
-  background("url('/Users/lee/Documents/Visual_Studio_Code/Chaser Game/background_grid.jpg')");
+  background("white");
   noStroke();
   goal.render();
   player.render();
