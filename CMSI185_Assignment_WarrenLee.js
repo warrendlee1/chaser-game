@@ -1,4 +1,14 @@
 const progressBar = document.querySelector("progress");
+const prompt = document.querySelector("#prompt");
+let canvas;
+let gamestate = 0;
+let backgroundImage;
+
+prompt.addEventListener('click', () => {
+  canvas.style.display = 'block';
+  prompt.style.display = 'none'; 
+  gamestate = 1;
+});
 
 class Sprite {
   constructor(x, y, color, diameter) {
@@ -10,12 +20,10 @@ class Sprite {
 }
 class Player extends Sprite {
   constructor() {
-    super(width/10, height/2, "black", 20);
+    super(width/10, height/2, "white", 20);
     this.health = 100;
   }
-  render() {
-    fill(this.color);
-    circle(this.x,this.y, this.diameter);
+  move() {
     let speed = 4;
     if (keyIsDown(LEFT_ARROW)) {
       if(this.x < 10){
@@ -45,6 +53,11 @@ class Player extends Sprite {
       this.y += speed;
     }
   }
+  render() {
+    fill(this.color);
+    circle(this.x,this.y, this.diameter);
+  }
+  
   takeHit() {
     this.health -= 1;
     progressBar.value = this.health;
@@ -92,8 +105,6 @@ class Enemy2 extends Sprite {
     this.Yspeed = Yspeed;
   }
   render() {
-    // stroke("black");
-    // strokeWeight(5); 
     circle(this.x, this.y, this.diameter);
   }
   move(target) {
@@ -112,16 +123,11 @@ class Goal {
     Object.assign(this, { x, y, width, height, color });
   }
   isTouched(player) {
-    if(player.x >= this.x){
-      return true;
-    } else {
-      return false;
-    }
+    return player.x >= width-30;
   }
-  
   render() {
     let goal_width = 30;
-    fill("red");
+    fill("#ff3333");
     rect(width - goal_width, 0, goal_width, height);
   }
 }
@@ -129,15 +135,28 @@ class Goal {
 let width = 1500;
 let height = 750;
 let goal = new Goal();
+let points = 0;
+
+
+let scarecrow;
+
+
+// let playerTail = new PlayerTail(...randomParticle(), 0.01);
 let player = new Player();
 let enemies = []; 
 let enemies2 = [];
 
-for (let i = 0; i<300; i++){
+for (let i = 0; i<200; i++){
   enemies.push(new Enemy(...randomParticle()))
 }
 for (let i = 0; i<5; i++){
   enemies2.push(new Enemy2(...randomPointOnCanvas(), Math.random()*0.01, Math.random()*0.01))
+}
+
+function preload() {
+  backgroundImage = loadImage(
+   "https://i.imgur.com/TmeMFKz.jpg"
+  );
 }
 
 function moveToward(leader, follower, speed) {
@@ -209,6 +228,7 @@ function randomColor() {
 function setup() {
   createCanvas(width, height);
   noStroke();
+  canvas = document.querySelector("canvas");
 }
 
 function slowDown(sprite) {
@@ -221,23 +241,51 @@ function slowDown(sprite) {
   
 }
 
+function renderScarecrow(){
+  fill('rgba(255, 255, 255, 0.6');
+  circle(this.x,this.y, this.diameter);
+}
 function draw() {
-  background("white");
+  background('black');
   noStroke();
-  goal.render();
-  player.render();
-  enemies.forEach(enemy1 => {
-    enemy1.render();
-    checkForDamage(enemy1, player);
-    enemy1.move();
-    slowDown(enemy1);
-  });
-  enemies2.forEach(enemy2 => {
-    enemy2.render();
-    checkForDamage(enemy2,player);
-    enemy2.move(player);
-    slowDown(enemy2);
-  })
-  adjust();
+  if (gamestate === 1) {
+    goal.render();
+    player.render();
+    player.move();
+    enemies.forEach(enemy1 => {
+      enemy1.render();
+      checkForDamage(enemy1, player);
+      enemy1.move();
+      slowDown(enemy1);
+    });
+    enemies2.forEach(enemy2 => {enemy2.render();})
+    enemies2.forEach(enemy2 => {checkForDamage(enemy2,player);})
+    enemies2.forEach(enemy2 => {slowDown(enemy2);})
+    enemies2.forEach(enemy2 => {enemy2.move(scarecrow || player);})
+    
+    if(scarecrow){
+      console.log("hi")
+      scarecrow.render();
+      scarecrow.ttl--; 
+      if (scarecrow.ttl < 0) {
+        scarecrow = undefined;
+      }
+    }
+    if(goal.isTouched(player)){
+      gamestate = 2;
+    }
+    adjust();
+  }
+
+  if(gamestate === 2) {
+    console.log("you win");
+    
+  }
 }
 
+function mouseClicked() {
+  if (!scarecrow) {
+    scarecrow = new Player(Math.random()*width, Math.random()*height, "white", 10, 0);
+    scarecrow.ttl = frameRate() * 5;
+  }
+}
