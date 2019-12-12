@@ -7,4 +7,5 @@ Use the spacebar to slow down the enemy bubbles to help Bobby reach the other si
 Click the mouse to spawn a fake Bobby up to three times to distract enemy bubbles.
 
 Good luck, and be careful!
+
 By Marina Aziz and Warren Lee
