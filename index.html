@@ -1,24 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Bubble Escape</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <div id = "title">
-        Bubble Escape
-    </div>
-    <div id = "progress">
-        <progress value = "100" max="100"> </progress>
-    </div>
-    <div id = "button">
-        <button class="glow-on-hover" id = "prompt" type="button">PLAY</button>    
-    </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/p5.min.js"></script>
-    <script src="CMSI185_Assignment_WarrenLee.js"></script>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Bubble Escape</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<audio id="victoryAudio">
+        <source src="VICTORY.mp3" type="audio/mpeg">
+    </audio>
+<audio id="lossAudio">
+            <source src="loss.mp3" type="audio/mpeg">
+    </audio>
+<div id="title">
+  Bubble Escape
+</div>
+<div id="progress">
+  <progress value="100" max="100"> </progress>
+</div>
+<div id="button">
+  <button class="glow-on-hover" id="prompt" type="button">PLAY</button>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/p5.min.js"></script>
+<script src="CMSI185_Assignment_WarrenLee.js"></script>
 </body>
+
 </html>
